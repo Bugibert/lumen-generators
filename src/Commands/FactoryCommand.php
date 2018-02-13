@@ -7,6 +7,7 @@ class FactoryCommand extends BaseCommand {
         {model : full qualified name of the model.}
         {--fields= : the fields to generate.}
         {--file= : the factories file.}
+        {--path=app : where to store the model php file.}
         {--parsed : tells the command that arguments have been already parsed. To use when calling the command from an other command and passing the parsed arguments and options}
         {--force= : override the existing files}
     ';
@@ -16,6 +17,18 @@ class FactoryCommand extends BaseCommand {
     public function handle()
     {
         $model = $this->argument('model');
+        $path = $this->option('path');
+
+        if(strrpos($model, "\\") === false){
+            $model = "App\\" . $model;
+        }
+        $name = explode("\\", $model);
+        $name = $name[count($name) - 1];
+
+        $fullName = $model;
+        if (isset($path)) {
+            $fullName = $this->getNamespace() . "\\" . $name;
+        }
 
         $file = $this->getFile();
 
@@ -24,6 +37,7 @@ class FactoryCommand extends BaseCommand {
         $content .= $this->getTemplate('factory')
             ->with([
                 'model' => $model,
+                'full_name' => $fullName,
                 'factory_fields' => $this->getFieldsContent()
             ])
             ->get();
@@ -60,6 +74,11 @@ class FactoryCommand extends BaseCommand {
         }
 
         return $content;
+    }
+    
+    protected function getNamespace()
+    {
+        return str_replace(' ', '\\', ucwords(str_replace('/', ' ', $this->option('path'))));
     }
 
 }
