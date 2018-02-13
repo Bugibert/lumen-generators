@@ -1,8 +1,8 @@
 
 /**
- * Factory definition for model {{model}}.
+ * Factory definition for model {{full_name}}.
  */
-$factory->define({{model}}::class, function ($faker) {
+$factory->define({{full_name}}::class, function ($faker) {
     return [
 {{factory_fields}}
     ];
