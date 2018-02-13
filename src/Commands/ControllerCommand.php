@@ -9,6 +9,7 @@ class ControllerCommand extends BaseCommand {
         {model : Name of the model (with namespace if not App)}
 		{--no-routes= : without routes}
         {--force= : override the existing files}
+        {--path=app : where to store the model php file.}
         {--laravel : Use Laravel style route definitions}
     ';
 
@@ -17,6 +18,12 @@ class ControllerCommand extends BaseCommand {
     public function handle()
     {
     	$model = $this->argument('model');
+        $path = $this->option('path');
+        $fullName = "App\\" . $model;
+    	if (isset($path)) {
+    	    $fullName = $this->getNamespace() . "\\" . $model;
+        }
+        
     	$name = '';
     	if(strrpos($model, "\\") === false){
     		$name = $model;
@@ -29,7 +36,8 @@ class ControllerCommand extends BaseCommand {
         $content = $this->getTemplate('controller')
         	->with([
         		'name' => $controller,
-        		'model' => $model
+        		'model' => $model,
+                'full_name' => $fullName
         	])
         	->get();
 
@@ -46,6 +54,11 @@ class ControllerCommand extends BaseCommand {
 
             $this->call('wn:route', $options);
         }
+    }
+
+    protected function getNamespace()
+    {
+        return str_replace(' ', '\\', ucwords(str_replace('/', ' ', $this->option('path'))));
     }
 
 }
