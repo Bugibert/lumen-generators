@@ -67,6 +67,7 @@ class ResourceCommand extends BaseCommand {
         // generating the controller and routes
         $controllerOptions = [
             'model' => $modelName,
+            '--path' => $this->option('path'),
             '--force' => $this->option('force'),
             '--no-routes' => false,
         ];
@@ -78,6 +79,7 @@ class ResourceCommand extends BaseCommand {
         // generating model factory
         $this->call('wn:factory', [
             'model' => 'App\\' . $modelName,
+            '--path' => $this->option('path'),
             '--fields' => $this->factoryFields(),
             '--force' => $this->option('force'),
             '--parsed' => true
